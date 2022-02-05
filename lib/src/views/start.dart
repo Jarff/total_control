@@ -75,7 +75,7 @@ class StartPage extends StatelessWidget {
                   child: InkWell(
                     onTap: () async {
                       await Navigator.of(context)
-                          .pushReplacementNamed('/Dashboard');
+                          .pushReplacementNamed('/Pages');
                     },
                     child: const Text(
                       "Omitir",
