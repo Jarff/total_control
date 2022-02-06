@@ -16,10 +16,11 @@ class BodyText extends TextStyle {
     double? fontSize,
   }) {
     return TextStyle(
-        fontFamily: fontFamily,
-        color: color,
-        fontWeight: fontWeight,
-        decoration: textDecoration,
-        fontSize: fontSize);
+      fontFamily: fontFamily,
+      color: color,
+      fontWeight: fontWeight,
+      decoration: textDecoration,
+      fontSize: fontSize,
+    );
   }
 }

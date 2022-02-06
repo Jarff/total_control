@@ -21,7 +21,6 @@ class FFButtonOptions {
 
 Widget FFButtonWidget(
     {Function()? onPressed, String text = '', FFButtonOptions? options}) {
-  print(options?.width);
   return ElevatedButton(
     onPressed: onPressed,
     child: Text(
