@@ -1,3 +1,4 @@
+import 'package:control_total/src/helpers/helper.dart';
 import 'package:control_total/src/models/Account.dart';
 import 'package:control_total/themes/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +63,7 @@ class _RepositoryCardRowState extends State<RepositoryCardRow> {
                 ),
               ),
               Text(
-                '\$ ${widget.account.balance}',
+                '\$${Helper.numberFormat(widget.account.balance.toStringAsFixed(2))}',
                 style: FlutterFlowTheme.bodyText1.override(
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w500,

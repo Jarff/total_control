@@ -1,7 +1,11 @@
+import 'package:control_total/src/helpers/helper.dart';
+import 'package:control_total/src/models/Account.dart';
 import 'package:control_total/src/models/Transaction.dart';
+import 'package:control_total/src/models/account_type.dart';
 import 'package:control_total/src/widgets/DashboardShortcutTransactionCard.dart';
 import 'package:control_total/themes/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class DashboardPageWidget extends StatefulWidget {
   const DashboardPageWidget({Key? key}) : super(key: key);
@@ -12,6 +16,28 @@ class DashboardPageWidget extends StatefulWidget {
 
 class _DashboardPageWidgetState extends State<DashboardPageWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  double totalBalance = 0;
+  double disponible = 0;
+  double saldo = 0;
+
+  @override
+  void initState() {
+    load();
+    super.initState();
+  }
+
+  void load() async {
+    Account accountRepo =
+        Account(balance: 0, name: 'Test', type: AccountType.credit);
+    var rows = await accountRepo.all();
+    for (var map in rows) {
+      Account account = Account.map(map);
+      totalBalance += account.cardLimit ?? 0;
+      disponible += account.balance;
+      saldo += account.saldo ?? 0;
+    }
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +72,7 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                     ),
                   ),
                   Text(
-                    '\$4,162.04',
+                    '\$${Helper.numberFormat(totalBalance.toStringAsFixed(2))}',
                     style: FlutterFlowTheme.bodyText1.override(
                       fontFamily: 'Lato',
                       fontSize: 30,
@@ -55,7 +81,7 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: Color(0xFFAEEAB7),
+                      color: const Color(0xFFAEEAB7),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Padding(
@@ -127,14 +153,14 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                               'Disponible',
                               style: FlutterFlowTheme.bodyText1.override(
                                 fontFamily: 'Lato',
-                                color: Color(0xFFFED8CE),
+                                color: const Color(0xFFFED8CE),
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsetsDirectional.fromSTEB(
                                   0, 0, 0, 10),
                               child: Text(
-                                '\$1,260.50',
+                                '\$${Helper.numberFormat(disponible.toStringAsFixed(2))}',
                                 style: FlutterFlowTheme.bodyText1.override(
                                   fontFamily: 'Lato',
                                   color: Colors.white,
@@ -192,7 +218,7 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                               padding: const EdgeInsetsDirectional.fromSTEB(
                                   0, 0, 0, 10),
                               child: Text(
-                                '\$2,901.54',
+                                '\$${Helper.numberFormat(saldo.toStringAsFixed(2))}',
                                 style: FlutterFlowTheme.bodyText1.override(
                                   fontFamily: 'Lato',
                                   color: Colors.white,

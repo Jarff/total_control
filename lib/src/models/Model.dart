@@ -30,11 +30,12 @@ class Model {
     columns.forEach((column) {
       text += ", ${column.name} ${column.type}";
     });
+    // print(text);
     return openDatabase(
       join(await getDatabasesPath(), '${table}.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE $table(id INTEGER PRIMARY KEY $text)',
+          'CREATE TABLE $table(id INTEGER PRIMARY KEY$text)',
         );
       },
       version: 1,
@@ -50,6 +51,13 @@ class Model {
     final db = await database;
 
     if (table != null) {
+      Map<String, dynamic> map = {};
+
+      data.toMap().keys.forEach((key) {
+        if (key != "id") {
+          map[key] = data.toMap()[key];
+        }
+      });
       db.insert(table!, data.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace);
     }

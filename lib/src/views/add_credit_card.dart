@@ -1,3 +1,4 @@
+import 'package:control_total/src/helpers/helper.dart';
 import 'package:control_total/src/models/Account.dart';
 import 'package:control_total/src/models/account_type.dart';
 import 'package:control_total/themes/flutter_flow_theme.dart';
@@ -24,8 +25,12 @@ class _AddCreditCardWidgetState extends State<AddCreditCardWidget> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool saving = false;
 
-  Account account =
-      Account(name: "Sin asignar", balance: 0, red: "VISA", type: 'credit');
+  Account account = Account(
+      name: "Sin asignar",
+      balance: 0,
+      red: "VISA",
+      type: 'credit',
+      cutDate: "10");
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -138,7 +143,7 @@ class _AddCreditCardWidgetState extends State<AddCreditCardWidget> {
                                 ],
                               ),
                               Text(
-                                '\$ ${account.balance}',
+                                '\$ ${Helper.numberFormat(account.balance.toStringAsFixed(2))}',
                                 style: FlutterFlowTheme.bodyText1.override(
                                   fontFamily: 'Roboto',
                                   color: Colors.white,
@@ -419,9 +424,12 @@ class _AddCreditCardWidgetState extends State<AddCreditCardWidget> {
                                 25, 15, 25, 10),
                             child: TextFormField(
                               controller: textController6,
-                              onChanged: (input) => setState(() {
-                                account.cutDate = input.toString();
-                              }),
+                              onChanged: (input) {
+                                setState(() {
+                                  // print(input.toString());
+                                  account.cutDate = input.toString();
+                                });
+                              },
                               obscureText: false,
                               decoration: InputDecoration(
                                 labelText: 'Día de corte',
@@ -459,12 +467,24 @@ class _AddCreditCardWidgetState extends State<AddCreditCardWidget> {
                           //Hides the keyboard
                           FocusScope.of(context).unfocus();
                           if (formKey.currentState?.validate() ?? false) {
-                            print(account.toMap().toString());
-                            // await account.create();
+                            account.cardLimit =
+                                account.balance + (account.saldo ?? 0);
+                            account.create().then((value) async {
+                              //Mostramos que se ha creado correctamente
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Cuenta creada correctamente'),
+                                ),
+                              );
+                              await Navigator.of(context)
+                                  .pushReplacementNamed('/Pages', arguments: 2);
+                            }).catchError((err) {
+                              print(err);
+                            });
                           } else {
-                            // setState(() {
-                            //   saving = false;
-                            // });
+                            setState(() {
+                              saving = false;
+                            });
                           }
                         },
                         child: (saving)

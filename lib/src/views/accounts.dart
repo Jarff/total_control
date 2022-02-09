@@ -1,3 +1,4 @@
+import 'package:control_total/src/helpers/helper.dart';
 import 'package:control_total/src/models/Account.dart';
 import 'package:control_total/src/models/account_red.dart';
 import 'package:control_total/src/models/account_type.dart';
@@ -19,50 +20,10 @@ class AccountsPageWidget extends StatefulWidget {
 class _AccountsPageWidgetState extends State<AccountsPageWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool loading = true;
-  List<CreditCardRow> creditCards = [
-    CreditCardRow(
-      account: Account(
-          name: "Santander",
-          balance: 1448.09,
-          type: AccountType.credit,
-          limit: 7000,
-          red: AccountRed.mastercard),
-    ),
-    CreditCardRow(
-      account: Account(
-          name: "AMEX",
-          balance: 843.59,
-          type: AccountType.credit,
-          limit: 9000,
-          red: AccountRed.visa),
-    )
-  ];
-  List<CreditCardRow> debitCards = [
-    CreditCardRow(
-      account: Account(
-        name: "Santander",
-        balance: 1448.09,
-        type: AccountType.debit,
-        red: AccountRed.visa,
-      ),
-    ),
-  ];
-  List<RepositoryCardRow> repositoryCard = [
-    RepositoryCardRow(
-      account: Account(
-        name: "Efectivo",
-        balance: 345,
-        type: AccountType.repository,
-      ),
-    ),
-    RepositoryCardRow(
-      account: Account(
-        name: "Ahorro",
-        balance: 1989,
-        type: AccountType.repository,
-      ),
-    ),
-  ];
+  List<CreditCardRow> creditCards = [];
+  List<CreditCardRow> debitCards = [];
+  List<RepositoryCardRow> repositoryCard = [];
+  double networth = 0;
 
   @override
   void initState() {
@@ -71,7 +32,42 @@ class _AccountsPageWidgetState extends State<AccountsPageWidget> {
   }
 
   void load() async {
-    await Future.delayed(const Duration(seconds: 1));
+    Account accountRepo =
+        Account(balance: 0, name: 'Test', type: AccountType.credit);
+    //Obtenemos las cuentas de tipo credit
+    var rows = await accountRepo.where('type = ?', [AccountType.credit]);
+    for (var map in rows) {
+      Account account = Account.map(map);
+      //Aumentamos la cantidad disponible
+      networth += account.balance;
+      //Agregamos al listado
+      creditCards.add(CreditCardRow(
+        account: account,
+      ));
+    }
+    //Obtenemos las cuentas de tipo repositorio
+    var repositories =
+        await accountRepo.where('type = ?', [AccountType.repository]);
+    for (var map in repositories) {
+      Account account = Account.map(map);
+      //Aumentamos la cantidad disponible
+      networth += account.balance;
+      //Agregamos al listado
+      repositoryCard.add(RepositoryCardRow(
+        account: account,
+      ));
+    }
+    //Obtenemos las cuentas de tipo debito
+    var debits = await accountRepo.where('type = ?', [AccountType.debit]);
+    for (var map in debits) {
+      Account account = Account.map(map);
+      //Aumentamos la cantidad disponible
+      networth += account.balance;
+      //Agregamos al listado
+      debitCards.add(CreditCardRow(
+        account: account,
+      ));
+    }
     setState(() {
       loading = false;
     });
@@ -111,7 +107,7 @@ class _AccountsPageWidgetState extends State<AccountsPageWidget> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            '\$4,162.04',
+                            '\$ ${Helper.numberFormat(networth.toStringAsFixed(2))}',
                             style: FlutterFlowTheme.bodyText1.override(
                               fontFamily: 'Lato',
                               color: Colors.white,
@@ -179,8 +175,9 @@ class _AccountsPageWidgetState extends State<AccountsPageWidget> {
                             color: Color(0xFFA1B1C9),
                             size: 30,
                           ),
-                          onPressed: () {
-                            print('IconButton pressed ...');
+                          onPressed: () async {
+                            await Navigator.of(context)
+                                .pushNamed('/AddRepository');
                           },
                         ),
                       ],
@@ -207,8 +204,9 @@ class _AccountsPageWidgetState extends State<AccountsPageWidget> {
                             color: Color(0xFFA1B1C9),
                             size: 30,
                           ),
-                          onPressed: () {
-                            print('IconButton pressed ...');
+                          onPressed: () async {
+                            await Navigator.of(context)
+                                .pushNamed('/AddCreditCard');
                           },
                         ),
                       ],

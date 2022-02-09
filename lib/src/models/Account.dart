@@ -3,21 +3,23 @@ import 'package:control_total/src/models/Model.dart';
 
 class Account extends Model {
   Account(
-      {required this.name,
+      {this.id,
+      required this.name,
       required this.balance,
       this.saldo,
       required this.type,
       this.red,
       this.cutDate,
-      this.limit})
+      this.cardLimit})
       : super();
   int? id = 1;
   String name;
   double balance;
   double? saldo;
+  //Refactorizar esta parte para ser fiel a los principios del SOLID
   String type;
   String? red;
-  double? limit;
+  double? cardLimit;
   String? cutDate;
   @override
   List<DataModel> columns = [];
@@ -32,11 +34,12 @@ class Account extends Model {
   List<DataModel> setColumns() {
     columns = [
       DataModel(type: "TEXT", name: "name"),
-      DataModel(type: "TEXT", name: "balance"),
-      DataModel(type: "TEXT", name: "saldo"),
+      DataModel(type: "REAL", name: "balance"),
+      DataModel(type: "REAL", name: "saldo"),
       DataModel(type: "TEXT", name: "cutDate"),
       DataModel(type: "TEXT", name: "type"),
-      DataModel(type: "TEXT", name: "limit"),
+      DataModel(type: "TEXT", name: "red"),
+      DataModel(type: "REAL", name: "cardLimit"),
     ];
     return super.setColumns();
   }
@@ -47,7 +50,7 @@ class Account extends Model {
     return super.getData();
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap({bool complete = false}) {
     return {
       'id': id,
       'name': name,
@@ -55,7 +58,32 @@ class Account extends Model {
       'saldo': saldo,
       'cutDate': cutDate,
       'type': type,
-      'limit': limit
+      'red': red,
+      'cardLimit': cardLimit
     };
+  }
+
+  static Account map(Map<String, dynamic> map) {
+    return Account(
+      id: map['id'],
+      name: map['name'],
+      balance: map['balance'],
+      saldo: map['saldo'],
+      cutDate: map['cutDate'],
+      type: map['type'],
+      red: map['red'],
+      cardLimit: map['cardLimit'],
+    );
+  }
+
+  void fromMap(Map<String, dynamic> map) {
+    id = map['id'];
+    name = map['name'];
+    balance = map['balance'];
+    saldo = map['saldo'];
+    cutDate = map['cutDate'];
+    type = map['type'];
+    red = map['red'];
+    cardLimit = map['cardLimit'];
   }
 }

@@ -1,3 +1,4 @@
+import 'package:control_total/src/helpers/helper.dart';
 import 'package:control_total/src/models/Account.dart';
 import 'package:control_total/src/models/account_type.dart';
 import 'package:control_total/themes/flutter_flow_theme.dart';
@@ -52,16 +53,20 @@ class _CreditCardRowState extends State<CreditCardRow> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: Text(
-                          widget.account.name.toUpperCase(),
-                          style: FlutterFlowTheme.bodyText1.override(
-                            fontFamily: 'Montserrat',
-                            color: Colors.white,
-                            fontSize: 9,
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Text(
+                            widget.account.name.toUpperCase(),
+                            style: FlutterFlowTheme.bodyText1.override(
+                              fontFamily: 'Montserrat',
+                              color: Colors.white,
+                              fontSize: 9,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
+                        flex: 3,
                       ),
                       Expanded(
                         child: Text(
@@ -109,7 +114,7 @@ class _CreditCardRowState extends State<CreditCardRow> {
                       ),
                     ),
                     Text(
-                      '\$ ${widget.account.balance}',
+                      '\$${Helper.numberFormat(widget.account.balance.toStringAsFixed(2))}',
                       style: FlutterFlowTheme.bodyText1.override(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w500,
@@ -135,7 +140,7 @@ class _CreditCardRowState extends State<CreditCardRow> {
                         ),
                       ),
                       Text(
-                        '20.11%',
+                        "${getPorcentage()} %",
                         style: FlutterFlowTheme.bodyText1.override(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w500,
@@ -167,5 +172,11 @@ class _CreditCardRowState extends State<CreditCardRow> {
         ],
       ),
     );
+  }
+
+  String getPorcentage() {
+    return (((widget.account.saldo ?? 0) / (widget.account.cardLimit ?? 1)) *
+            100)
+        .toStringAsFixed(2);
   }
 }

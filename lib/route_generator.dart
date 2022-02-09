@@ -1,4 +1,5 @@
 import 'package:control_total/src/views/add_credit_card.dart';
+import 'package:control_total/src/views/add_repository.dart';
 import 'package:control_total/src/views/dashboard.dart';
 import 'package:control_total/src/views/pages.dart';
 import 'package:control_total/src/views/start.dart';
@@ -11,9 +12,15 @@ class RouteGenerator {
       case '/Start':
         return MaterialPageRoute(builder: (_) => const StartPage());
       case '/Pages':
-        return MaterialPageRoute(builder: (_) => PagesWidget());
+        return MaterialPageRoute(
+          builder: (_) => PagesWidget(
+            currentTab: args,
+          ),
+        );
       case '/AddCreditCard':
         return MaterialPageRoute(builder: (_) => const AddCreditCardWidget());
+      case '/AddRepository':
+        return MaterialPageRoute(builder: (_) => const AddRepositoryWidget());
       case '/Dashboard':
         return MaterialPageRoute(builder: (_) => const DashboardPageWidget());
       default:
