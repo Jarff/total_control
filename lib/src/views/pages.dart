@@ -1,10 +1,13 @@
 import 'package:control_total/src/models/RouteArgument.dart';
+import 'package:control_total/src/models/TransactionType.dart';
 import 'package:control_total/src/views/accounts.dart';
 import 'package:control_total/src/views/dashboard.dart';
 import 'package:control_total/src/views/suscription.dart';
 import 'package:control_total/src/views/transactions.dart';
+import 'package:control_total/src/widgets/TransactionTypeButton.dart';
 import 'package:control_total/themes/flutter_flow_theme.dart';
 import 'package:control_total/themes/widgets/flutter_flow_icon_button.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
@@ -91,7 +94,53 @@ class _PagesWidgetState extends State<PagesWidget> {
                 child: const Icon(Icons.add_circle,
                     color: Color(0xFFA1B1C9), size: 30),
                 backgroundColor: Colors.white,
-                onPressed: () {},
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return CupertinoAlertDialog(
+                          title: const Text('Nueva Transacción'),
+                          content: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                TransactionTypeButton(
+                                  title: 'Depósito',
+                                  type: TransactionType.deposit,
+                                  icon: const Icon(Icons.arrow_upward,
+                                      color: Color(0xFF2DCE89), size: 20),
+                                ),
+                                TransactionTypeButton(
+                                  title: 'Gasto',
+                                  type: TransactionType.expense,
+                                  icon: const Icon(Icons.arrow_downward,
+                                      color: Color(0xFFF5365C), size: 20),
+                                ),
+                                TransactionTypeButton(
+                                  title: 'Retiro',
+                                  type: TransactionType.withdraw,
+                                  icon: const Icon(
+                                    Icons.arrow_back,
+                                    color: Color(0xFF5E72E4),
+                                  ),
+                                ),
+                                TransactionTypeButton(
+                                  title: 'Transferencia',
+                                  type: TransactionType.transfer,
+                                  icon: const Icon(Icons.compare_arrows,
+                                      color: Color(0xFFFB6340)),
+                                ),
+                              ],
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text('Cerrar')),
+                          ],
+                        );
+                      });
+                },
               )
             : null,
         body: SafeArea(

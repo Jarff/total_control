@@ -1,5 +1,4 @@
 import 'package:control_total/themes/flutter_flow_theme.dart';
-import 'package:control_total/themes/widgets/flutter_flow_icon_button.dart';
 import 'package:flutter/material.dart';
 // import 'package:google_fonts/google_fonts.dart';
 
@@ -26,7 +25,7 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
       mainAxisSize: MainAxisSize.max,
       children: [
         Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
+          padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -34,14 +33,14 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
                 child: TextFormField(
                   controller: textController,
                   obscureText: false,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Buscar',
                     enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(
                         color: Color(0x00000000),
                         width: 1,
                       ),
-                      borderRadius: const BorderRadius.only(
+                      borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(4.0),
                         topRight: Radius.circular(4.0),
                       ),
@@ -51,7 +50,7 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
                         color: Color(0x00000000),
                         width: 1,
                       ),
-                      borderRadius: const BorderRadius.only(
+                      borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(4.0),
                         topRight: Radius.circular(4.0),
                       ),
@@ -65,7 +64,7 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
                   style: FlutterFlowTheme.bodyText1,
                 ),
               ),
-              Icon(
+              const Icon(
                 Icons.filter_list_sharp,
                 color: Color(0xFFA1B1C9),
                 size: 30,
@@ -74,7 +73,7 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
           ),
         ),
         Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(20, 15, 20, 0),
+          padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 0),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -86,12 +85,12 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
           ),
         ),
         Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
+          padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
           child: Container(
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
-              color: Color(0xFFFBF9F5),
-              boxShadow: [
+              color: const Color(0xFFFBF9F5),
+              boxShadow: const [
                 BoxShadow(
                   blurRadius: 20,
                   color: Color(0x18171717),
@@ -100,7 +99,7 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -115,11 +114,11 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: Color(0xFFDB3636),
+                      color: const Color(0xFFDB3636),
                       borderRadius: BorderRadius.circular(50),
                     ),
                     child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
+                      padding: const EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
                       child: Text(
                         'SELF CARE',
                         style: FlutterFlowTheme.bodyText1.override(
@@ -144,7 +143,7 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
           ),
         ),
         Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(20, 5, 20, 0),
+          padding: const EdgeInsetsDirectional.fromSTEB(20, 5, 20, 0),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -156,12 +155,12 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
           ),
         ),
         Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
+          padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
           child: Container(
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
-              color: Color(0xFFFBF9F5),
-              boxShadow: [
+              color: const Color(0xFFFBF9F5),
+              boxShadow: const [
                 BoxShadow(
                   blurRadius: 20,
                   color: Color(0x18171717),
@@ -170,7 +169,7 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -185,11 +184,11 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: Color(0xFF36DB93),
+                      color: const Color(0xFF36DB93),
                       borderRadius: BorderRadius.circular(50),
                     ),
                     child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
+                      padding: const EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
                       child: Text(
                         'CAR',
                         style: FlutterFlowTheme.bodyText1.override(
@@ -214,12 +213,12 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
           ),
         ),
         Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
+          padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
           child: Container(
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
-              color: Color(0xFFFBF9F5),
-              boxShadow: [
+              color: const Color(0xFFFBF9F5),
+              boxShadow: const [
                 BoxShadow(
                   blurRadius: 20,
                   color: Color(0x18171717),
@@ -228,7 +227,7 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -243,11 +242,11 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: Color(0xFFDBD736),
+                      color: const Color(0xFFDBD736),
                       borderRadius: BorderRadius.circular(50),
                     ),
                     child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
+                      padding: const EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
                       child: Text(
                         'SHOPPIN',
                         style: FlutterFlowTheme.bodyText1.override(
@@ -272,12 +271,12 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
           ),
         ),
         Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
+          padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
           child: Container(
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
-              color: Color(0xFFFBF9F5),
-              boxShadow: [
+              color: const Color(0xFFFBF9F5),
+              boxShadow: const [
                 BoxShadow(
                   blurRadius: 20,
                   color: Color(0x18171717),
@@ -286,7 +285,7 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -301,11 +300,11 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: Color(0xFF6436DB),
+                      color: const Color(0xFF6436DB),
                       borderRadius: BorderRadius.circular(50),
                     ),
                     child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
+                      padding: const EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
                       child: Text(
                         'TRANSPORTATION',
                         style: FlutterFlowTheme.bodyText1.override(
@@ -330,12 +329,12 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
           ),
         ),
         Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
+          padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
           child: Container(
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
-              color: Color(0xFFFBF9F5),
-              boxShadow: [
+              color: const Color(0xFFFBF9F5),
+              boxShadow: const [
                 BoxShadow(
                   blurRadius: 20,
                   color: Color(0x18171717),
@@ -344,7 +343,7 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -359,11 +358,11 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: Color(0xFFDB3636),
+                      color: const Color(0xFFDB3636),
                       borderRadius: BorderRadius.circular(50),
                     ),
                     child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
+                      padding: const EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
                       child: Text(
                         'SELF CARE',
                         style: FlutterFlowTheme.bodyText1.override(
