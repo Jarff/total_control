@@ -144,87 +144,90 @@ class _PagesWidgetState extends State<PagesWidget> {
               )
             : null,
         body: SafeArea(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 1,
-            decoration: const BoxDecoration(
-              color: Color(0xFFF2F3F5),
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 25),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  0, 0, 10, 0),
-                              child: Container(
-                                width: 60,
-                                height: 60,
-                                clipBehavior: Clip.antiAlias,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Image.network(
-                                  'https://picsum.photos/seed/424/600',
+          child: Padding(
+            padding: const EdgeInsets.only(top: 20),
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 1,
+              decoration: const BoxDecoration(
+                color: Color(0xFFF2F3F5),
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Padding(
+                      padding:
+                          const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 25),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                    0, 0, 10, 0),
+                                child: Container(
+                                  width: 60,
+                                  height: 60,
+                                  clipBehavior: Clip.antiAlias,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Image.network(
+                                    'https://picsum.photos/seed/424/600',
+                                  ),
                                 ),
                               ),
-                            ),
-                            Column(
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Hola!',
-                                  style: FlutterFlowTheme.bodyText1.override(
-                                    fontFamily: 'Montserrat',
-                                    color: Color(0xFFA3B2C7),
-                                    fontSize: 12,
+                              Column(
+                                mainAxisSize: MainAxisSize.max,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Hola!',
+                                    style: FlutterFlowTheme.bodyText1.override(
+                                      fontFamily: 'Montserrat',
+                                      color: Color(0xFFA3B2C7),
+                                      fontSize: 12,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  'Rodrigo S.',
-                                  style: FlutterFlowTheme.bodyText1.override(
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.w500,
+                                  Text(
+                                    'Rodrigo S.',
+                                    style: FlutterFlowTheme.bodyText1.override(
+                                      fontFamily: 'Montserrat',
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        FlutterFlowIconButton(
-                          borderColor: Colors.transparent,
-                          borderRadius: 5,
-                          borderWidth: 1,
-                          buttonSize: 40,
-                          fillColor: Colors.white,
-                          icon: const Icon(
-                            Icons.edit,
-                            color: Color(0xFFA1B1C9),
-                            size: 20,
+                                ],
+                              ),
+                            ],
                           ),
-                          onPressed: () {
-                            print('IconButton pressed ...');
-                          },
-                        ),
-                      ],
+                          FlutterFlowIconButton(
+                            borderColor: Colors.transparent,
+                            borderRadius: 5,
+                            borderWidth: 1,
+                            buttonSize: 40,
+                            fillColor: Colors.white,
+                            icon: const Icon(
+                              Icons.edit,
+                              color: Color(0xFFA1B1C9),
+                              size: 20,
+                            ),
+                            onPressed: () {
+                              print('IconButton pressed ...');
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    child: widget.currentPage,
-                  )
-                  // SingleChildScrollView(child: widget.currentPage),
-                ],
+                    Container(
+                      child: widget.currentPage,
+                    )
+                    // SingleChildScrollView(child: widget.currentPage),
+                  ],
+                ),
               ),
             ),
           ),

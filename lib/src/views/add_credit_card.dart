@@ -222,13 +222,6 @@ class _AddCreditCardWidgetState extends State<AddCreditCardWidget> {
                             labelText: 'Tipo',
                             errorStyle: const TextStyle(
                                 color: Colors.redAccent, fontSize: 16.0),
-                            // enabledBorder: OutlineInputBorder(
-                            //   borderSide: const BorderSide(
-                            //     color: Color(0xFFC1C4C4),
-                            //     width: 1,
-                            //   ),
-                            //   borderRadius: BorderRadius.circular(15),
-                            // ),
                             focusedBorder: OutlineInputBorder(
                               borderSide: const BorderSide(
                                 color: Color(0xFFC1C4C4),

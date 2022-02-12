@@ -1,6 +1,8 @@
+import 'package:control_total/src/models/category.dart';
 import 'package:control_total/themes/flutter_flow_theme.dart';
 import 'package:control_total/themes/widgets/ff_button_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StartPage extends StatelessWidget {
   const StartPage({Key? key}) : super(key: key);
@@ -74,6 +76,31 @@ class StartPage extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 16.0),
                   child: InkWell(
                     onTap: () async {
+                      //Creamos los modelos TENEMOS QUE AGREGAR El preferences
+
+                      Category category = Category(
+                          name: "Salud", color: const Color(0xFFACDDDE));
+                      await category.create();
+                      category.name = "Belleza";
+                      category.color = const Color(0xFFCAF1DE);
+                      await category.create();
+                      category.name = "Super";
+                      category.color = const Color(0xFFE1F8DC);
+                      await category.create();
+                      category.name = "Comida";
+                      category.color = const Color(0xFFFEF8DD);
+                      await category.create();
+                      category.name = "Transporte";
+                      category.color = const Color(0xFFFFE7C7);
+                      await category.create();
+                      category.name = "Vida Social";
+                      category.color = const Color(0xFFF7D8BA);
+                      await category.create();
+                      //Actualizamos el shared preferences para omitir este paso en el futuro
+                      // Obtain shared preferences.
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setBool('tutorialDone', true);
+
                       await Navigator.of(context)
                           .pushReplacementNamed('/Pages');
                     },

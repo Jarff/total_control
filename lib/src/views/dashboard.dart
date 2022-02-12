@@ -255,14 +255,18 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
                   title: "Recurrentes",
                   route: "/Recurrentes",
                   transactions: [
-                    Transaction(name: "Netflix", date: "22 Ene", amount: 299)
+                    Transaction(
+                        name: "Netflix",
+                        date: DateTime(2022, 1, 22),
+                        amount: 299)
                   ],
                 ),
                 DashboardShortcutTransactionCard(
                   title: "Tarjetas",
                   route: "/Recurrentes",
                   transactions: [
-                    Transaction(name: "AMEX", date: "28 Feb", amount: 1299)
+                    Transaction(
+                        name: "AMEX", date: DateTime(2022, 2, 28), amount: 1299)
                   ],
                 )
               ],
