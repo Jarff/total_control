@@ -29,16 +29,9 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool saving = false;
   String? _currentSelectedValueType;
-  String? _currentSelectedValueTypeCategory = "1";
+  String? _currentSelectedValueTypeCategory;
   List<Account> accounts = [];
-  List<Category> categories = [
-    Category(id: 1, name: "Salud"),
-    Category(id: 2, name: "Belleza"),
-    Category(id: 3, name: "Super"),
-    Category(id: 4, name: "Comida"),
-    Category(id: 5, name: "Transporte"),
-    Category(id: 6, name: "Vida Social"),
-  ];
+  List<Category> categories = [];
   List<DropdownMenuItem<String>> categoryOptions = [
     const DropdownMenuItem<String>(
       value: "0",
@@ -77,25 +70,48 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
     // options = [];
   }
 
-  Future<List<DropdownMenuItem<String>>> loadAccounts() async {
+  Future<Map<String, List<DropdownMenuItem<String>>>> loadResources() async {
     Account accountRepo =
         Account(balance: 0, name: 'Test', type: AccountType.credit);
     var accounts = await accountRepo.all();
-    List<DropdownMenuItem<String>> options = [];
-    _currentSelectedValueType ??= accounts[0]['id'].toString();
-    for (var map in accounts) {
-      Account account = Account.map(map);
-      this.accounts.add(account);
-      options.add(
-        DropdownMenuItem<String>(
-          value: account.id.toString(),
-          child: Text(
-              "${account.name} ${account.red} ${AccountType.string(account.type)}",
+    Map<String, List<DropdownMenuItem<String>>> data = {
+      'account_options': <DropdownMenuItem<String>>[],
+      'category_options': <DropdownMenuItem<String>>[]
+    };
+    // List<DropdownMenuItem<String>> options = [];
+    if (accounts.isNotEmpty) {
+      _currentSelectedValueType ??= accounts[0]['id'].toString();
+      print("DATA: ${data.toString()}");
+      transaction.account ??= Account.map(accounts[0]);
+      for (var map in accounts) {
+        Account account = Account.map(map);
+        this.accounts.add(account);
+        data['account_options']?.add(
+          DropdownMenuItem<String>(
+            value: account.id.toString(),
+            child: Text(
+                "${account.name} ${account.red} ${AccountType.string(account.type)}",
+                overflow: TextOverflow.ellipsis),
+          ),
+        );
+      }
+      //Ahora creamos las opciones para las categorías
+      Category categoryRepo = Category();
+      var categories = await categoryRepo.all();
+      _currentSelectedValueTypeCategory ??= categories[0]['id'].toString();
+      transaction.category ??= Category.map(categories[0]);
+
+      for (var map in categories) {
+        Category category = Category.map(map);
+        this.categories.add(category);
+        data['category_options']?.add(DropdownMenuItem<String>(
+          value: category.id.toString(),
+          child: Text(category.name ?? "Categoría sin nombre",
               overflow: TextOverflow.ellipsis),
-        ),
-      );
+        ));
+      }
     }
-    return options;
+    return data;
   }
 
   @override
@@ -131,73 +147,106 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
               ),
               child: SingleChildScrollView(
                 child: FutureBuilder(
-                    future: loadAccounts(),
-                    initialData: [],
+                    future: loadResources(),
+                    initialData: const {
+                      'account_options': <DropdownMenuItem<String>>[],
+                      'category_options': <DropdownMenuItem<String>>[]
+                    },
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
                       if (snapshot.data == null) {
                         return LoadingAccounts();
                       } else {
-                        return Form(
-                          key: formKey,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              BannerTransaction(type: widget.type),
-                              Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    25, 15, 25, 10),
-                                child: TextFormField(
-                                  controller: textController1,
-                                  validator: (input) {
-                                    if ((input?.trim().length ?? 0) > 0) {
-                                      return null;
-                                    } else {
-                                      return "Este campo es obligatorio";
-                                    }
-                                  },
-                                  onChanged: (value) {
-                                    setState(() {
-                                      transaction.name = value;
-                                    });
-                                  },
-                                  obscureText: false,
-                                  decoration: InputDecoration(
-                                    labelText: 'Descripción',
-                                    border: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                        color: Color(0xFFC1C4C4),
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(15),
+                        if (snapshot.data['account_options'].isEmpty) {
+                          return Container(
+                            height: MediaQuery.of(context).size.height * 0.7,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    "Agrega Cuentas para poder generar transferencias",
+                                    style: TextStyle(
+                                      fontSize: 24,
                                     ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                        color: Color(0xFFC1C4C4),
-                                        width: 1,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(
+                                    height: 90,
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      await Navigator.of(context)
+                                          .pushReplacementNamed('/Pages',
+                                              arguments: 2);
+                                    },
+                                    child: Text(
+                                      "Agregar",
+                                      style:
+                                          FlutterFlowTheme.subtitle2.override(
+                                        fontFamily: 'Montserrat',
+                                        color: Colors.white,
+                                        fontSize: 20,
                                       ),
-                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                        const Color(0xFF1B2024),
+                                      ),
+                                      shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                        const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
+                                        ),
+                                      ),
+                                      minimumSize:
+                                          MaterialStateProperty.all<Size>(
+                                        const Size(double.infinity, 60),
+                                      ),
                                     ),
                                   ),
-                                  style: FlutterFlowTheme.bodyText1.override(
-                                    fontFamily: 'Montserrat',
-                                    color: const Color(0xFF1B2024),
-                                  ),
-                                ),
+                                ],
                               ),
-                              /**
-                           * TODO:
-                           * Debo cambiarlo por el input que puede buscar
-                           */
-                              Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    25, 15, 25, 10),
-                                child: InputDecorator(
-                                  decoration: InputDecoration(
-                                      labelText: 'Categoría',
-                                      errorStyle: const TextStyle(
-                                          color: Colors.redAccent,
-                                          fontSize: 16.0),
+                            ),
+                          );
+                        } else {
+                          return Form(
+                            key: formKey,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                BannerTransaction(type: widget.type),
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      25, 15, 25, 10),
+                                  child: TextFormField(
+                                    controller: textController1,
+                                    validator: (input) {
+                                      if ((input?.trim().length ?? 0) > 0) {
+                                        return null;
+                                      } else {
+                                        return "Este campo es obligatorio";
+                                      }
+                                    },
+                                    onChanged: (value) {
+                                      setState(() {
+                                        transaction.name = value;
+                                      });
+                                    },
+                                    obscureText: false,
+                                    decoration: InputDecoration(
+                                      labelText: 'Descripción',
+                                      border: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                          color: Color(0xFFC1C4C4),
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
                                       focusedBorder: OutlineInputBorder(
                                         borderSide: const BorderSide(
                                           color: Color(0xFFC1C4C4),
@@ -205,46 +254,143 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
                                         ),
                                         borderRadius: BorderRadius.circular(15),
                                       ),
-                                      border: OutlineInputBorder(
+                                    ),
+                                    style: FlutterFlowTheme.bodyText1.override(
+                                      fontFamily: 'Montserrat',
+                                      color: const Color(0xFF1B2024),
+                                    ),
+                                  ),
+                                ),
+                                /**
+                             * TODO:
+                             * Debo cambiarlo por el input que puede buscar
+                             */
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      25, 15, 25, 10),
+                                  child: InputDecorator(
+                                    decoration: InputDecoration(
+                                        labelText: 'Categoría',
+                                        errorStyle: const TextStyle(
+                                            color: Colors.redAccent,
+                                            fontSize: 16.0),
+                                        focusedBorder: OutlineInputBorder(
                                           borderSide: const BorderSide(
                                             color: Color(0xFFC1C4C4),
                                             width: 1,
                                           ),
                                           borderRadius:
-                                              BorderRadius.circular(15.0))),
-                                  isEmpty:
-                                      _currentSelectedValueTypeCategory == '',
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton<String>(
-                                      value: _currentSelectedValueTypeCategory,
-                                      isDense: true,
-                                      isExpanded: true,
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          _currentSelectedValueTypeCategory =
-                                              newValue ??
-                                                  _currentSelectedValueTypeCategory;
-                                          transaction.category = categories[
-                                              int.parse(
-                                                  _currentSelectedValueTypeCategory ??
-                                                      "0")];
-                                        });
-                                        // print(_currentSelectedValueType);
-                                      },
-                                      items: categoryOptions,
+                                              BorderRadius.circular(15),
+                                        ),
+                                        border: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                              color: Color(0xFFC1C4C4),
+                                              width: 1,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(15.0))),
+                                    isEmpty:
+                                        _currentSelectedValueTypeCategory == '',
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<String>(
+                                        value:
+                                            _currentSelectedValueTypeCategory,
+                                        isDense: true,
+                                        isExpanded: true,
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            _currentSelectedValueTypeCategory =
+                                                newValue ??
+                                                    _currentSelectedValueTypeCategory;
+                                            var selectedCategory = categories
+                                                .firstWhere((category) =>
+                                                    category.id.toString() ==
+                                                    _currentSelectedValueTypeCategory);
+                                            transaction.category =
+                                                selectedCategory;
+                                          });
+                                          // print(_currentSelectedValueType);
+                                        },
+                                        items:
+                                            snapshot.data['category_options'],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    25, 15, 25, 10),
-                                child: InputDecorator(
-                                  decoration: InputDecoration(
-                                      labelText: 'Cuenta',
-                                      errorStyle: const TextStyle(
-                                          color: Colors.redAccent,
-                                          fontSize: 16.0),
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      25, 15, 25, 10),
+                                  child: InputDecorator(
+                                    decoration: InputDecoration(
+                                        labelText: 'Cuenta',
+                                        errorStyle: const TextStyle(
+                                            color: Colors.redAccent,
+                                            fontSize: 16.0),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                            color: Color(0xFFC1C4C4),
+                                            width: 1,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                        ),
+                                        border: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                              color: Color(0xFFC1C4C4),
+                                              width: 1,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(15.0))),
+                                    isEmpty: _currentSelectedValueType == '',
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<String>(
+                                        value: _currentSelectedValueType,
+                                        isDense: true,
+                                        isExpanded: true,
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            _currentSelectedValueType =
+                                                newValue ??
+                                                    _currentSelectedValueType;
+                                            var selectedAccount =
+                                                accounts.firstWhere(
+                                              (account) =>
+                                                  account.id.toString() ==
+                                                  _currentSelectedValueType,
+                                            );
+                                            transaction.account =
+                                                selectedAccount;
+                                          });
+                                          // print(_currentSelectedValueType);
+                                        },
+                                        items: [
+                                          ...snapshot.data['account_options']
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      25, 15, 25, 10),
+                                  child: TextFormField(
+                                    controller: textController4,
+                                    obscureText: false,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        transaction.amount =
+                                            double.parse(value);
+                                      });
+                                    },
+                                    decoration: InputDecoration(
+                                      labelText: 'Cantidad',
+                                      border: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                          color: Color(0xFFC1C4C4),
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
                                       focusedBorder: OutlineInputBorder(
                                         borderSide: const BorderSide(
                                           color: Color(0xFFC1C4C4),
@@ -252,202 +398,156 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
                                         ),
                                         borderRadius: BorderRadius.circular(15),
                                       ),
+                                      prefixIcon: const Icon(
+                                        Icons.attach_money_outlined,
+                                      ),
+                                    ),
+                                    style: FlutterFlowTheme.bodyText1.override(
+                                      fontFamily: 'Poppins',
+                                      color: const Color(0xFF1B2024),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      25, 15, 25, 10),
+                                  child: TextFormField(
+                                    controller: textController5,
+                                    obscureText: false,
+                                    readOnly: true,
+                                    onTap: () async {
+                                      selectedDated = (await showDatePicker(
+                                        context: context,
+                                        initialDate: DateTime.now(),
+                                        firstDate:
+                                            DateTime(DateTime.now().year - 1),
+                                        lastDate:
+                                            DateTime(DateTime.now().year + 1),
+                                      ))!;
+                                      textController5?.value = TextEditingValue(
+                                          text: selectedDated.toString());
+                                      transaction.date = selectedDated;
+                                    },
+                                    validator: (input) {
+                                      if ((input?.trim().length ?? 0) > 0) {
+                                        return null;
+                                      } else {
+                                        return "Este campo es obligatorio";
+                                      }
+                                    },
+                                    // initialValue: selectedDated.toString(),
+                                    decoration: InputDecoration(
+                                      labelText: 'Fecha',
                                       border: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                            color: Color(0xFFC1C4C4),
-                                            width: 1,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(15.0))),
-                                  isEmpty: _currentSelectedValueType == '',
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton<String>(
-                                      value: _currentSelectedValueType,
-                                      isDense: true,
-                                      isExpanded: true,
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          _currentSelectedValueType =
-                                              newValue ??
-                                                  _currentSelectedValueType;
-                                          var selectedAccount =
-                                              accounts.firstWhere(
-                                            (account) =>
-                                                account.id.toString() ==
-                                                _currentSelectedValueType,
-                                          );
-                                          transaction.account = selectedAccount;
-                                        });
-                                        // print(_currentSelectedValueType);
-                                      },
-                                      items: [...snapshot.data],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    25, 15, 25, 10),
-                                child: TextFormField(
-                                  controller: textController4,
-                                  obscureText: false,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      transaction.amount = double.parse(value);
-                                    });
-                                  },
-                                  decoration: InputDecoration(
-                                    labelText: 'Cantidad',
-                                    border: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                        color: Color(0xFFC1C4C4),
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                        color: Color(0xFFC1C4C4),
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    prefixIcon: const Icon(
-                                      Icons.attach_money_outlined,
-                                    ),
-                                  ),
-                                  style: FlutterFlowTheme.bodyText1.override(
-                                    fontFamily: 'Poppins',
-                                    color: const Color(0xFF1B2024),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    25, 15, 25, 10),
-                                child: TextFormField(
-                                  controller: textController5,
-                                  obscureText: false,
-                                  readOnly: true,
-                                  onTap: () async {
-                                    selectedDated = (await showDatePicker(
-                                      context: context,
-                                      initialDate: DateTime.now(),
-                                      firstDate:
-                                          DateTime(DateTime.now().year - 1),
-                                      lastDate:
-                                          DateTime(DateTime.now().year + 1),
-                                    ))!;
-                                    textController5?.value = TextEditingValue(
-                                        text: selectedDated.toString());
-                                    transaction.date = selectedDated;
-                                  },
-                                  validator: (input) {
-                                    if ((input?.trim().length ?? 0) > 0) {
-                                      return null;
-                                    } else {
-                                      return "Este campo es obligatorio";
-                                    }
-                                  },
-                                  // initialValue: selectedDated.toString(),
-                                  decoration: InputDecoration(
-                                    labelText: 'Fecha',
-                                    border: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                        color: Color(0xFFC1C4C4),
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                        color: Color(0xFFC1C4C4),
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                  ),
-                                  style: FlutterFlowTheme.bodyText1.override(
-                                    fontFamily: 'Montserrat',
-                                    color: const Color(0xFF1B2024),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    25, 15, 25, 25),
-                                child: ElevatedButton(
-                                  onPressed: () async {
-                                    //Cambiamos el confirmar por un icono de cargando
-                                    setState(() {
-                                      saving = true;
-                                    });
-                                    // Hides the keyboard
-                                    FocusScope.of(context).unfocus();
-                                    formKey.currentState?.validate();
-                                    print(transaction.toMap().toString());
-                                    // if (formKey.currentState?.validate() ?? false) {
-                                    //   account.cardLimit =
-                                    //       account.balance + (account.saldo ?? 0);
-                                    //   account.create().then((value) async {
-                                    //     //Mostramos que se ha creado correctamente
-                                    //     ScaffoldMessenger.of(context).showSnackBar(
-                                    //       const SnackBar(
-                                    //         content: Text('Cuenta creada correctamente'),
-                                    //       ),
-                                    //     );
-                                    //     await Navigator.of(context)
-                                    //         .pushReplacementNamed('/Pages', arguments: 2);
-                                    //   }).catchError((err) {
-                                    //     print(err);
-                                    //   });
-                                    // } else {
-                                    //   setState(() {
-                                    //     saving = false;
-                                    //   });
-                                    // }
-                                  },
-                                  child: (saving)
-                                      ? const SizedBox(
-                                          width: 25,
-                                          height: 25,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: Color(0xFFBCEAC3),
-                                            backgroundColor: Colors.black,
-                                          ),
-                                        )
-                                      : Text(
-                                          "Confirmar",
-                                          style: FlutterFlowTheme.subtitle2
-                                              .override(
-                                            fontFamily: 'Montserrat',
-                                            color: Colors.white,
-                                            fontSize: 20,
-                                          ),
+                                        borderSide: const BorderSide(
+                                          color: Color(0xFFC1C4C4),
+                                          width: 1,
                                         ),
-                                  style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                      const Color(0xFF1B2024),
-                                    ),
-                                    shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                      const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10)),
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                          color: Color(0xFFC1C4C4),
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(15),
                                       ),
                                     ),
-                                    minimumSize:
-                                        MaterialStateProperty.all<Size>(
-                                      const Size(double.infinity, 50),
+                                    style: FlutterFlowTheme.bodyText1.override(
+                                      fontFamily: 'Montserrat',
+                                      color: const Color(0xFF1B2024),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      25, 15, 25, 25),
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      //Cambiamos el confirmar por un icono de cargando
+                                      setState(() {
+                                        saving = true;
+                                      });
+                                      // Hides the keyboard
+                                      FocusScope.of(context).unfocus();
+                                      if (formKey.currentState?.validate() ??
+                                          false) {
+                                        transaction
+                                            .create()
+                                            .then((value) async {
+                                          //Mostramos que se ha creado correctamente
+                                          if (value == 0) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                content:
+                                                    Text('Ocurrió un error'),
+                                              ),
+                                            );
+                                          } else {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                    'Transacción creada correctamente'),
+                                              ),
+                                            );
+                                            int count = 0;
+                                            Navigator.of(context)
+                                                .popUntil((_) => count++ >= 2);
+                                          }
+                                        }).catchError((onError) {
+                                          print(onError);
+                                        });
+                                      } else {
+                                        setState(() {
+                                          saving = false;
+                                        });
+                                      }
+                                    },
+                                    child: (saving)
+                                        ? const SizedBox(
+                                            width: 25,
+                                            height: 25,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Color(0xFFBCEAC3),
+                                              backgroundColor: Colors.black,
+                                            ),
+                                          )
+                                        : Text(
+                                            "Confirmar",
+                                            style: FlutterFlowTheme.subtitle2
+                                                .override(
+                                              fontFamily: 'Montserrat',
+                                              color: Colors.white,
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                        const Color(0xFF1B2024),
+                                      ),
+                                      shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                        const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
+                                        ),
+                                      ),
+                                      minimumSize:
+                                          MaterialStateProperty.all<Size>(
+                                        const Size(double.infinity, 50),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                        // print(snapshot.data.toString());
                       }
                     }),
               ),

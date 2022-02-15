@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:control_total/src/models/DataModel.dart';
 import 'package:sqflite/sqflite.dart';
 import "package:path/path.dart";
@@ -46,20 +48,29 @@ class Model {
     return data;
   }
 
-  Future<void> create() async {
+  Future<int> create() async {
     final database = startConnection();
     final db = await database;
 
     if (table != null) {
       Map<String, dynamic> map = {};
-
       data.toMap().keys.forEach((key) {
         if (key != "id") {
-          map[key] = data.toMap()[key];
+          if (data.toMap()[key] is Map) {
+            //Lo volvemos json
+            map[key] = jsonEncode(data.toMap()[key]);
+            print(map[key]);
+            // map[key] = data.toMap()[key].toString();
+          } else {
+            map[key] = data.toMap()[key];
+          }
         }
       });
-      db.insert(table!, data.toMap(),
-          conflictAlgorithm: ConflictAlgorithm.replace);
+      return 0;
+      // return await db.insert(table!, data.toMap(),
+      //     conflictAlgorithm: ConflictAlgorithm.replace);
+    } else {
+      return 0;
     }
   }
 

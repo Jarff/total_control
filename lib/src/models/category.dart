@@ -32,7 +32,7 @@ class Category extends Model {
     return super.getData();
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap({bool complete = false}) {
     return {
       'id': id,
       'name': name,
@@ -40,7 +40,32 @@ class Category extends Model {
     };
   }
 
+  // Map<String, dynamic> toJson() => {
+  //       'id': id,
+  //       'name': name,
+  //       'color': color?.value.toString(),
+  //     };
+
   static Category map(Map<String, dynamic> map) {
-    return Category(id: map['id'], name: map['name'], color: map['color']);
+    return Category(
+      id: map['id'],
+      name: map['name'],
+      color: Color(
+        int.parse(map['color']),
+      ),
+    );
+  }
+
+  void fromMap(Map<String, dynamic> map) {
+    if (map['color'] is int) {
+      id = map['id'];
+      name = map['name'];
+      color = Color(map['color']);
+    } else {
+      id = map['id'];
+      name = map['name'];
+      color = Color(int.parse(map['color']));
+    }
+    // color = Color(int.parse(map['color']));
   }
 }
