@@ -7,6 +7,7 @@ import 'package:control_total/src/widgets/BannerTransaction.dart';
 import 'package:control_total/src/widgets/LoadingAccounts.dart';
 import 'package:control_total/themes/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 // import 'package:google_fonts/google_fonts.dart';
 
 class AddTransactionWidget extends StatefulWidget {
@@ -32,32 +33,6 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
   String? _currentSelectedValueTypeCategory;
   List<Account> accounts = [];
   List<Category> categories = [];
-  List<DropdownMenuItem<String>> categoryOptions = [
-    const DropdownMenuItem<String>(
-      value: "0",
-      child: Text("Salud", overflow: TextOverflow.ellipsis),
-    ),
-    const DropdownMenuItem<String>(
-      value: "1",
-      child: Text("Belleza", overflow: TextOverflow.ellipsis),
-    ),
-    const DropdownMenuItem<String>(
-      value: "2",
-      child: Text("Super", overflow: TextOverflow.ellipsis),
-    ),
-    const DropdownMenuItem<String>(
-      value: "3",
-      child: Text("Comida", overflow: TextOverflow.ellipsis),
-    ),
-    const DropdownMenuItem<String>(
-      value: "4",
-      child: Text("Transporte", overflow: TextOverflow.ellipsis),
-    ),
-    const DropdownMenuItem<String>(
-      value: "5",
-      child: Text("Vida Social", overflow: TextOverflow.ellipsis),
-    ),
-  ];
 
   @override
   void initState() {
@@ -81,8 +56,9 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
     // List<DropdownMenuItem<String>> options = [];
     if (accounts.isNotEmpty) {
       _currentSelectedValueType ??= accounts[0]['id'].toString();
-      print("DATA: ${data.toString()}");
       transaction.account ??= Account.map(accounts[0]);
+      transaction.accountId ??= (Account.map(accounts[0])).id;
+
       for (var map in accounts) {
         Account account = Account.map(map);
         this.accounts.add(account);
@@ -100,6 +76,7 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
       var categories = await categoryRepo.all();
       _currentSelectedValueTypeCategory ??= categories[0]['id'].toString();
       transaction.category ??= Category.map(categories[0]);
+      transaction.categoryId ??= (Category.map(categories[0])).id;
 
       for (var map in categories) {
         Category category = Category.map(map);
@@ -306,8 +283,12 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
                                                 .firstWhere((category) =>
                                                     category.id.toString() ==
                                                     _currentSelectedValueTypeCategory);
+                                            //Asignamos la categoría
                                             transaction.category =
                                                 selectedCategory;
+                                            //Asignamos el id de la categoría
+                                            transaction.categoryId =
+                                                selectedCategory.id;
                                           });
                                           // print(_currentSelectedValueType);
                                         },
@@ -358,8 +339,12 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
                                                   account.id.toString() ==
                                                   _currentSelectedValueType,
                                             );
+                                            //Asignamos la transacción
                                             transaction.account =
                                                 selectedAccount;
+                                            //Asignamos el id de la transacción
+                                            transaction.accountId =
+                                                selectedAccount.id;
                                           });
                                           // print(_currentSelectedValueType);
                                         },
@@ -424,8 +409,11 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
                                         lastDate:
                                             DateTime(DateTime.now().year + 1),
                                       ))!;
+                                      final DateFormat formatter =
+                                          DateFormat('yyyy-MM-dd');
                                       textController5?.value = TextEditingValue(
-                                          text: selectedDated.toString());
+                                          text:
+                                              formatter.format(selectedDated));
                                       transaction.date = selectedDated;
                                     },
                                     validator: (input) {
@@ -485,6 +473,9 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
                                               ),
                                             );
                                           } else {
+                                            //Actualizamos la cuenta
+                                            if
+                                            await transaction.account?.update();
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
                                               const SnackBar(
@@ -495,6 +486,9 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
                                             int count = 0;
                                             Navigator.of(context)
                                                 .popUntil((_) => count++ >= 2);
+                                            await Navigator.of(context)
+                                                .pushReplacementNamed('/Pages',
+                                                    arguments: 3);
                                           }
                                         }).catchError((onError) {
                                           print(onError);

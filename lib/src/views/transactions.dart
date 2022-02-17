@@ -1,3 +1,4 @@
+import 'package:control_total/src/helpers/helper.dart';
 import 'package:control_total/src/models/Transaction.dart';
 import 'package:control_total/themes/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
@@ -20,78 +21,86 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
     super.initState();
     textController = TextEditingController();
     loadTransactions();
-    ejemplos.add(
-      Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
-        child: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: const Color(0xFFFBF9F5),
-            boxShadow: const [
-              BoxShadow(
-                blurRadius: 20,
-                color: Color(0x18171717),
-              )
-            ],
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Corte de Cabello',
-                  style: FlutterFlowTheme.bodyText1.override(
-                    fontFamily: 'Poppins',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFDB3636),
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
-                    child: Text(
-                      'SELF CARE',
-                      style: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Poppins',
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-                Text(
-                  '\$1,448.09',
-                  style: FlutterFlowTheme.bodyText1.override(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
   }
 
   Future<void> loadTransactions() async {
     Transaction transactionRepo = Transaction();
     var transactions = await transactionRepo.all();
-    print(transactions);
-    print('hola?');
     // for (var map in transactions) {
-    //   print('entra');
     //   Transaction transaction = Transaction.map(map);
-    //   print(transaction.toMap().toString());
+    //   transaction.delete();
     // }
+
+    for (var map in transactions) {
+      print('entra');
+      print(map.toString());
+      Transaction transaction = await Transaction.map(map);
+      setState(() {
+        ejemplos.add(
+          Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFBF9F5),
+                boxShadow: const [
+                  BoxShadow(
+                    blurRadius: 20,
+                    color: Color(0x18171717),
+                  )
+                ],
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      transaction.name ?? "Sin nombre",
+                      style: FlutterFlowTheme.bodyText1.override(
+                        fontFamily: 'Poppins',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFDB3636),
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Padding(
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
+                        child: Text(
+                          transaction.category?.name?.toUpperCase() ??
+                              "SIN CATEGORÍA",
+                          style: FlutterFlowTheme.bodyText1.override(
+                            fontFamily: 'Poppins',
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '\$${Helper.numberFormat(transaction.amount?.toStringAsFixed(2) ?? "0")}',
+                      style: FlutterFlowTheme.bodyText1.override(
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      });
+      // print(transaction.toMap().toString());
+    }
   }
 
   @override

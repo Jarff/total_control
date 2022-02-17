@@ -59,25 +59,25 @@ class Model {
           if (data.toMap()[key] is Map) {
             //Lo volvemos json
             map[key] = jsonEncode(data.toMap()[key]);
-            print(map[key]);
-            // map[key] = data.toMap()[key].toString();
+            // print(map[key]);
+            // // map[key] = data.toMap()[key].toString();
           } else {
             map[key] = data.toMap()[key];
           }
         }
       });
-      return 0;
-      // return await db.insert(table!, data.toMap(),
-      //     conflictAlgorithm: ConflictAlgorithm.replace);
+      // return 0;
+      return await db.insert(table!, data.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
     } else {
       return 0;
     }
   }
 
-  Future<void> update() async {
+  Future<int> update() async {
     final database = startConnection();
     final db = await database;
-    await db.update(
+    return await db.update(
       table!,
       data.toMap(),
       where: 'id = ?',
