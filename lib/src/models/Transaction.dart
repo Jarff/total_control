@@ -71,7 +71,7 @@ class Transaction extends Model {
       type: AccountType.repository,
     );
     if (map['account_id'] != null) {
-      var accountMap = await _account.find(map['category_id']);
+      var accountMap = await _account.find(map['account_id']);
       _account = Account.map(accountMap);
     }
     return Transaction(

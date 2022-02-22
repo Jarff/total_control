@@ -474,21 +474,43 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
                                             );
                                           } else {
                                             //Actualizamos la cuenta
-                                            if
-                                            await transaction.account?.update();
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              const SnackBar(
-                                                content: Text(
-                                                    'Transacción creada correctamente'),
-                                              ),
-                                            );
-                                            int count = 0;
-                                            Navigator.of(context)
-                                                .popUntil((_) => count++ >= 2);
-                                            await Navigator.of(context)
-                                                .pushReplacementNamed('/Pages',
-                                                    arguments: 3);
+                                            if (transaction.account != null) {
+                                              if (widget.type ==
+                                                  TransactionType.deposit) {
+                                                transaction.account?.balance +=
+                                                    transaction.amount ?? 0;
+                                              } else if (widget.type ==
+                                                  TransactionType.transfer) {
+                                                //TODO
+                                              } else {
+                                                transaction.account?.balance -=
+                                                    transaction.amount ?? 0;
+                                              }
+                                              await transaction.account
+                                                  ?.update();
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                      'Transacción creada correctamente'),
+                                                ),
+                                              );
+                                              int count = 0;
+                                              Navigator.of(context).popUntil(
+                                                  (_) => count++ >= 2);
+                                              await Navigator.of(context)
+                                                  .pushReplacementNamed(
+                                                      '/Pages',
+                                                      arguments: 3);
+                                            } else {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                      'Lo sentimos algo salió mal'),
+                                                ),
+                                              );
+                                            }
                                           }
                                         }).catchError((onError) {
                                           print(onError);

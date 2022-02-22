@@ -26,15 +26,24 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
   Future<void> loadTransactions() async {
     Transaction transactionRepo = Transaction();
     var transactions = await transactionRepo.all();
-    // for (var map in transactions) {
-    //   Transaction transaction = Transaction.map(map);
-    //   transaction.delete();
-    // }
-
+    DateTime? currentDate = DateTime.now();
     for (var map in transactions) {
-      print('entra');
-      print(map.toString());
       Transaction transaction = await Transaction.map(map);
+      if (currentDate != transaction.date) {
+        ejemplos.add(Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 0),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Text(
+                transaction.date.toString(),
+                style: FlutterFlowTheme.bodyText1,
+              ),
+            ],
+          ),
+        ));
+      }
+      currentDate = transaction.date;
       setState(() {
         ejemplos.add(
           Padding(
@@ -152,18 +161,6 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
                 Icons.filter_list_sharp,
                 color: Color(0xFFA1B1C9),
                 size: 30,
-              ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 0),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Text(
-                'Vie 13 Ene',
-                style: FlutterFlowTheme.bodyText1,
               ),
             ],
           ),
