@@ -37,6 +37,7 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
   @override
   void initState() {
     super.initState();
+    transaction.type = widget.type;
     textController1 = TextEditingController();
     textController2 = TextEditingController();
     textController3 = TextEditingController();
@@ -477,11 +478,30 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
                                             if (transaction.account != null) {
                                               if (widget.type ==
                                                   TransactionType.deposit) {
+                                                //Si es de credito debe disminuir el saldo y aumentar el balance
+                                                if (transaction.account?.type ==
+                                                    AccountType.credit) {
+                                                  transaction.account
+                                                      ?.saldo = (transaction
+                                                              .account?.saldo ??
+                                                          0) -
+                                                      (transaction.amount ?? 0);
+                                                }
                                                 transaction.account?.balance +=
                                                     transaction.amount ?? 0;
                                               } else if (widget.type ==
                                                   TransactionType.transfer) {
-                                                //TODO
+                                                //Si es de credito debe disminuir el saldo y aumentar el balance
+                                                if (transaction.account?.type ==
+                                                    AccountType.credit) {
+                                                  transaction.account
+                                                      ?.saldo = (transaction
+                                                              .account?.saldo ??
+                                                          0) -
+                                                      (transaction.amount ?? 0);
+                                                }
+                                                transaction.account?.balance +=
+                                                    transaction.amount ?? 0;
                                               } else {
                                                 transaction.account?.balance -=
                                                     transaction.amount ?? 0;
@@ -514,6 +534,16 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
                                           }
                                         }).catchError((onError) {
                                           print(onError);
+                                          setState(() {
+                                            saving = false;
+                                          });
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                  'Lo sentimos algo salió mal'),
+                                            ),
+                                          );
                                         });
                                       } else {
                                         setState(() {

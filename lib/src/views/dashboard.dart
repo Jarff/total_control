@@ -32,7 +32,11 @@ class _DashboardPageWidgetState extends State<DashboardPageWidget> {
     var rows = await accountRepo.all();
     for (var map in rows) {
       Account account = Account.map(map);
-      totalBalance += account.cardLimit ?? 0;
+      if (account.type == AccountType.credit) {
+        totalBalance += account.cardLimit ?? 0;
+      } else {
+        totalBalance += account.balance;
+      }
       disponible += account.balance;
       saldo += account.saldo ?? 0;
     }

@@ -20,34 +20,39 @@ class _RepositoryCardRowState extends State<RepositoryCardRow> {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            width: 125,
-            height: 75,
-            decoration: BoxDecoration(
-              color: const Color(0xFF1B2024),
-              boxShadow: const [
-                BoxShadow(
-                  blurRadius: 20,
-                  color: Color(0x39171717),
-                )
-              ],
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    widget.account.name.toUpperCase(),
-                    style: FlutterFlowTheme.bodyText1.override(
-                      fontFamily: 'Montserrat',
-                      color: Colors.white,
-                      fontSize: 14,
-                    ),
-                  ),
+          GestureDetector(
+            onTap: () async {
+              await Navigator.of(context).pushNamed('/DetailAccount');
+            },
+            child: Container(
+              width: 125,
+              height: 75,
+              decoration: BoxDecoration(
+                color: const Color(0xFF1B2024),
+                boxShadow: const [
+                  BoxShadow(
+                    blurRadius: 20,
+                    color: Color(0x39171717),
+                  )
                 ],
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.account.name.toUpperCase(),
+                      style: FlutterFlowTheme.bodyText1.override(
+                        fontFamily: 'Montserrat',
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

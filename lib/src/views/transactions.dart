@@ -2,6 +2,7 @@ import 'package:control_total/src/helpers/helper.dart';
 import 'package:control_total/src/models/Transaction.dart';
 import 'package:control_total/themes/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 // import 'package:google_fonts/google_fonts.dart';
 
 class TransactionsPageWidget extends StatefulWidget {
@@ -14,7 +15,7 @@ class TransactionsPageWidget extends StatefulWidget {
 class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
   TextEditingController? textController;
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  List<Widget> ejemplos = [];
+  List<Widget> transactionsWidgets = [];
 
   @override
   void initState() {
@@ -25,18 +26,18 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
 
   Future<void> loadTransactions() async {
     Transaction transactionRepo = Transaction();
-    var transactions = await transactionRepo.all();
+    var transactions = await transactionRepo.all(orderBy: 'date DESC');
     DateTime? currentDate = DateTime.now();
     for (var map in transactions) {
       Transaction transaction = await Transaction.map(map);
       if (currentDate != transaction.date) {
-        ejemplos.add(Padding(
+        transactionsWidgets.add(Padding(
           padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 0),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             children: [
               Text(
-                transaction.date.toString(),
+                DateFormat.yMMMMd('es').format(transaction.date!),
                 style: FlutterFlowTheme.bodyText1,
               ),
             ],
@@ -45,63 +46,97 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
       }
       currentDate = transaction.date;
       setState(() {
-        ejemplos.add(
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: const Color(0xFFFBF9F5),
-                boxShadow: const [
-                  BoxShadow(
-                    blurRadius: 20,
-                    color: Color(0x18171717),
-                  )
-                ],
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+        transactionsWidgets.add(
+          Dismissible(
+            key: Key(transaction.id.toString()),
+            onDismissed: (direction) {
+              /*
+              TODO:
+              We need to delete the record from the DB
+              */
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text('La transacción se ha eliminado')));
+            },
+            background: Container(
+                color: Colors.red,
                 child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      transaction.name ?? "Sin nombre",
-                      style: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Poppins',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: const [
+                    Padding(
+                      padding: EdgeInsets.only(right: 28.0),
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.white,
                       ),
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFDB3636),
-                        borderRadius: BorderRadius.circular(50),
+                    // SizedBox(
+                    //   width: 0,
+                    // ),
+                  ],
+                )),
+            child: Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFBF9F5),
+                  boxShadow: const [
+                    BoxShadow(
+                      blurRadius: 20,
+                      color: Color(0x18171717),
+                    )
+                  ],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        transaction.name ?? "Sin nombre",
+                        style: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Poppins',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                      child: Padding(
-                        padding:
-                            const EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
-                        child: Text(
-                          transaction.category?.name?.toUpperCase() ??
-                              "SIN CATEGORÍA",
-                          style: FlutterFlowTheme.bodyText1.override(
-                            fontFamily: 'Poppins',
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
+                      Container(
+                        decoration: BoxDecoration(
+                          color: transaction.category?.color,
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: Padding(
+                          padding:
+                              const EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
+                          child: Text(
+                            transaction.category?.name?.toUpperCase() ??
+                                "SIN CATEGORÍA",
+                            style: FlutterFlowTheme.bodyText1.override(
+                              fontFamily: 'Poppins',
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Text(
-                      '\$${Helper.numberFormat(transaction.amount?.toStringAsFixed(2) ?? "0")}',
-                      style: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w500,
+                      Row(
+                        children: [
+                          Text(
+                            '\$${Helper.numberFormat(transaction.amount?.toStringAsFixed(2) ?? "0")}',
+                            style: FlutterFlowTheme.bodyText1.override(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Helper.transactionTypeIcon(transaction.type),
+                        ],
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -165,251 +200,7 @@ class _TransactionsPageWidgetState extends State<TransactionsPageWidget> {
             ],
           ),
         ),
-        ...ejemplos,
-        Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(20, 5, 20, 0),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Text(
-                'Dom 11 Ene',
-                style: FlutterFlowTheme.bodyText1,
-              ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              color: const Color(0xFFFBF9F5),
-              boxShadow: const [
-                BoxShadow(
-                  blurRadius: 20,
-                  color: Color(0x18171717),
-                )
-              ],
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Transacción 2',
-                    style: FlutterFlowTheme.bodyText1.override(
-                      fontFamily: 'Poppins',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF36DB93),
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
-                      child: Text(
-                        'CAR',
-                        style: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Poppins',
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Text(
-                    '\$1,448.09',
-                    style: FlutterFlowTheme.bodyText1.override(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              color: const Color(0xFFFBF9F5),
-              boxShadow: const [
-                BoxShadow(
-                  blurRadius: 20,
-                  color: Color(0x18171717),
-                )
-              ],
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Transacción 3',
-                    style: FlutterFlowTheme.bodyText1.override(
-                      fontFamily: 'Poppins',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFDBD736),
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
-                      child: Text(
-                        'SHOPPIN',
-                        style: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Poppins',
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Text(
-                    '\$1,448.09',
-                    style: FlutterFlowTheme.bodyText1.override(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              color: const Color(0xFFFBF9F5),
-              boxShadow: const [
-                BoxShadow(
-                  blurRadius: 20,
-                  color: Color(0x18171717),
-                )
-              ],
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Transacción 4',
-                    style: FlutterFlowTheme.bodyText1.override(
-                      fontFamily: 'Poppins',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF6436DB),
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
-                      child: Text(
-                        'TRANSPORTATION',
-                        style: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Poppins',
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Text(
-                    '\$1,448.09',
-                    style: FlutterFlowTheme.bodyText1.override(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              color: const Color(0xFFFBF9F5),
-              boxShadow: const [
-                BoxShadow(
-                  blurRadius: 20,
-                  color: Color(0x18171717),
-                )
-              ],
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Transacción 5',
-                    style: FlutterFlowTheme.bodyText1.override(
-                      fontFamily: 'Poppins',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFDB3636),
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(8, 2, 8, 2),
-                      child: Text(
-                        'SELF CARE',
-                        style: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Poppins',
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Text(
-                    '\$1,448.09',
-                    style: FlutterFlowTheme.bodyText1.override(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+        ...transactionsWidgets,
       ],
     );
   }

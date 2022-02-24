@@ -9,6 +9,7 @@ import 'package:control_total/themes/flutter_flow_theme.dart';
 import 'package:control_total/themes/widgets/flutter_flow_icon_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 // ignore: must_be_immutable
 class PagesWidget extends StatefulWidget {
@@ -42,6 +43,7 @@ class _PagesWidgetState extends State<PagesWidget> {
   @override
   initState() {
     super.initState();
+    initializeDateFormatting();
     _selectTab(widget.currentTab);
   }
 

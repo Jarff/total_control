@@ -13,6 +13,7 @@ class Transaction extends Model {
   Transaction(
       {this.id,
       this.name,
+      this.type,
       this.date,
       this.amount,
       this.category,
@@ -25,6 +26,7 @@ class Transaction extends Model {
   int? categoryId;
   int? accountId;
   String? name = "Sin nombre";
+  String? type = "-";
   DateTime? date = DateTime.now();
   double? amount = 0.0;
   Category? category;
@@ -43,6 +45,7 @@ class Transaction extends Model {
     columns = [
       DataModel(type: DataModelType.text, name: "name"),
       DataModel(type: DataModelType.text, name: "date"),
+      DataModel(type: DataModelType.text, name: "type"),
       DataModel(type: DataModelType.real, name: "amount"),
       DataModel(type: DataModelType.integer, name: "category_id"),
       DataModel(type: DataModelType.text, name: "category"),
@@ -77,6 +80,7 @@ class Transaction extends Model {
     return Transaction(
       id: map['id'],
       name: map['name'],
+      type: map['type'],
       date: DateTime.parse(map['date']),
       amount: map['amount'],
       categoryId: map['category_id'],
@@ -97,6 +101,7 @@ class Transaction extends Model {
       'category_id': categoryId,
       'account_id': accountId,
       'name': name,
+      'type': type,
       'date': formatter.format(date ?? DateTime.now()),
       'amount': amount,
       'category': category?.toMap(),
@@ -109,6 +114,7 @@ class Transaction extends Model {
     categoryId = map['category_id'];
     accountId = map['account_id'];
     name = map['name'];
+    type = map['type'];
     date = DateTime.parse(map['date']);
     amount = map['amount'];
     if (map['category'] is Map) {

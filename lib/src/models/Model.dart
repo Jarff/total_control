@@ -116,14 +116,15 @@ class Model {
     }
   }
 
-  Future<List<Map<String, dynamic>>> all() async {
+  Future<List<Map<String, dynamic>>> all({orderBy}) async {
     final database = startConnection();
     final db = await database;
     //Verificamos que si este definido la tabla
     if (table == null) {
       print("tabla no definida");
     }
-    final List<Map<String, dynamic>> maps = await db.query(table!);
+    final List<Map<String, dynamic>> maps =
+        await db.query(table!, orderBy: orderBy);
     return List.generate(maps.length, (index) {
       data.fromMap(maps[index]);
       return data.toMap(complete: true);

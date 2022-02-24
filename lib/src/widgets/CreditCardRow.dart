@@ -21,83 +21,88 @@ class _CreditCardRowState extends State<CreditCardRow> {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            width: 125,
-            height: 75,
-            decoration: BoxDecoration(
-              boxShadow: const [
-                BoxShadow(
-                  blurRadius: 20,
-                  color: Color(0x39171717),
-                )
-              ],
-              gradient: const LinearGradient(
-                colors: [
-                  Color(0xFFFB9373),
-                  Color(0xFFD26BF1),
-                  Color(0xFF21ADE2)
+          GestureDetector(
+            onTap: () async {
+              await Navigator.of(context).pushNamed('/DetailAccount');
+            },
+            child: Container(
+              width: 125,
+              height: 75,
+              decoration: BoxDecoration(
+                boxShadow: const [
+                  BoxShadow(
+                    blurRadius: 20,
+                    color: Color(0x39171717),
+                  )
                 ],
-                stops: [0, 0.5, 1],
-                begin: AlignmentDirectional(0.77, 1),
-                end: AlignmentDirectional(-0.77, -1),
+                gradient: const LinearGradient(
+                  colors: [
+                    Color(0xFFFB9373),
+                    Color(0xFFD26BF1),
+                    Color(0xFF21ADE2)
+                  ],
+                  stops: [0, 0.5, 1],
+                  begin: AlignmentDirectional(0.77, 1),
+                  end: AlignmentDirectional(-0.77, -1),
+                ),
+                borderRadius: BorderRadius.circular(5),
               ),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
+              child: Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Text(
+                              widget.account.name.toUpperCase(),
+                              style: FlutterFlowTheme.bodyText1.override(
+                                fontFamily: 'Montserrat',
+                                color: Colors.white,
+                                fontSize: 9,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          flex: 3,
+                        ),
+                        Expanded(
                           child: Text(
-                            widget.account.name.toUpperCase(),
+                            widget.account.red?.toUpperCase() ?? "-",
                             style: FlutterFlowTheme.bodyText1.override(
                               fontFamily: 'Montserrat',
                               color: Colors.white,
                               fontSize: 9,
                             ),
+                            textAlign: TextAlign.end,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        flex: 3,
-                      ),
-                      Expanded(
-                        child: Text(
-                          widget.account.red?.toUpperCase() ?? "-",
+                      ],
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Text(
+                          (widget.account.type == AccountType.credit)
+                              ? "CREDITO"
+                              : "DEBITO",
                           style: FlutterFlowTheme.bodyText1.override(
                             fontFamily: 'Montserrat',
                             color: Colors.white,
-                            fontSize: 9,
+                            fontSize: 10,
                           ),
-                          textAlign: TextAlign.end,
-                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Text(
-                        (widget.account.type == AccountType.credit)
-                            ? "CREDITO"
-                            : "DEBITO",
-                        style: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Montserrat',
-                          color: Colors.white,
-                          fontSize: 10,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -161,7 +166,7 @@ class _CreditCardRowState extends State<CreditCardRow> {
                       ),
                     ),
                     Text(
-                      '\$ ${widget.account.balance}',
+                      '\$ ${Helper.numberFormat(widget.account.balance.toStringAsFixed(2))}',
                       style: FlutterFlowTheme.bodyText1.override(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w500,
