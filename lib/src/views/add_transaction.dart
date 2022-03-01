@@ -30,6 +30,7 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool saving = false;
   String? _currentSelectedValueType;
+  String? _currentSelectedValueTypeDestination;
   String? _currentSelectedValueTypeCategory;
   List<Account> accounts = [];
   List<Category> categories = [];
@@ -57,6 +58,7 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
     // List<DropdownMenuItem<String>> options = [];
     if (accounts.isNotEmpty) {
       _currentSelectedValueType ??= accounts[0]['id'].toString();
+      _currentSelectedValueTypeDestination ??= accounts[0]['id'].toString();
       transaction.account ??= Account.map(accounts[0]);
       transaction.accountId ??= (Account.map(accounts[0])).id;
 
@@ -304,7 +306,10 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
                                       25, 15, 25, 10),
                                   child: InputDecorator(
                                     decoration: InputDecoration(
-                                        labelText: 'Cuenta',
+                                        labelText: widget.type ==
+                                                TransactionType.transfer
+                                            ? 'Cuenta Origen'
+                                            : 'Cuenta',
                                         errorStyle: const TextStyle(
                                             color: Colors.redAccent,
                                             fontSize: 16.0),
@@ -356,6 +361,72 @@ class _AddTransactionWidgetState extends State<AddTransactionWidget> {
                                     ),
                                   ),
                                 ),
+                                (widget.type == TransactionType.transfer)
+                                    ? Padding(
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(25, 15, 25, 10),
+                                        child: InputDecorator(
+                                          decoration: InputDecoration(
+                                              labelText: 'Cuenta Destino',
+                                              errorStyle: const TextStyle(
+                                                  color: Colors.redAccent,
+                                                  fontSize: 16.0),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: const BorderSide(
+                                                  color: Color(0xFFC1C4C4),
+                                                  width: 1,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                              ),
+                                              border: OutlineInputBorder(
+                                                  borderSide: const BorderSide(
+                                                    color: Color(0xFFC1C4C4),
+                                                    width: 1,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          15.0))),
+                                          isEmpty:
+                                              _currentSelectedValueTypeDestination ==
+                                                  '',
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<String>(
+                                              value:
+                                                  _currentSelectedValueTypeDestination,
+                                              isDense: true,
+                                              isExpanded: true,
+                                              onChanged: (String? newValue) {
+                                                setState(() {
+                                                  _currentSelectedValueTypeDestination =
+                                                      newValue ??
+                                                          _currentSelectedValueTypeDestination;
+                                                  var selectedAccount =
+                                                      accounts.firstWhere(
+                                                    (account) =>
+                                                        account.id.toString() ==
+                                                        _currentSelectedValueTypeDestination,
+                                                  );
+                                                  //Necesitamos otra transaccion
+                                                  //Asignamos la transacción
+                                                  // transaction.account =
+                                                  //     selectedAccount;
+                                                  // //Asignamos el id de la transacción
+                                                  // transaction.accountId =
+                                                  //     selectedAccount.id;
+                                                });
+                                              },
+                                              items: [
+                                                ...snapshot
+                                                    .data['account_options']
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : SizedBox(
+                                        height: 0,
+                                      ),
                                 Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(
                                       25, 15, 25, 10),

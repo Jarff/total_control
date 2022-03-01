@@ -39,6 +39,7 @@ class PagesWidget extends StatefulWidget {
 }
 
 class _PagesWidgetState extends State<PagesWidget> {
+  final GlobalKey<ScaffoldState> _key = GlobalKey();
   bool showFloating = false;
   @override
   initState() {
@@ -87,6 +88,70 @@ class _PagesWidgetState extends State<PagesWidget> {
       child: Scaffold(
         key: widget.scaffoldKey,
         backgroundColor: const Color(0xFFF2F3F5),
+        drawer: Drawer(
+            child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
+                    child: Container(
+                      width: 90,
+                      height: 90,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: Image.network(
+                        'https://picsum.photos/seed/424/600',
+                      ),
+                    ),
+                  ),
+                  Column(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Hola!',
+                        style: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: Color(0xFFA3B2C7),
+                          fontSize: 14,
+                        ),
+                      ),
+                      Text(
+                        'Rodrigo S.',
+                        style: FlutterFlowTheme.bodyText1.override(
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              decoration: const BoxDecoration(color: Colors.white),
+            ),
+            ListTile(
+              onTap: () async {
+                await Navigator.of(context).pushNamed('/Categories');
+              },
+              leading: const Icon(
+                Icons.category,
+              ),
+              title: const Text(
+                "Categorías",
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ],
+        )),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         floatingActionButton: (showFloating)
             ? FloatingActionButton(
@@ -213,11 +278,12 @@ class _PagesWidgetState extends State<PagesWidget> {
                             buttonSize: 40,
                             fillColor: Colors.white,
                             icon: const Icon(
-                              Icons.edit,
+                              Icons.settings,
                               color: Color(0xFFA1B1C9),
                               size: 20,
                             ),
                             onPressed: () {
+                              widget.scaffoldKey.currentState!.openDrawer();
                               print('IconButton pressed ...');
                             },
                           ),

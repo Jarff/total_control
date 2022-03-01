@@ -23,7 +23,8 @@ class _CreditCardRowState extends State<CreditCardRow> {
         children: [
           GestureDetector(
             onTap: () async {
-              await Navigator.of(context).pushNamed('/DetailAccount');
+              await Navigator.of(context)
+                  .pushNamed('/DetailAccount', arguments: widget.account);
             },
             child: Container(
               width: 125,

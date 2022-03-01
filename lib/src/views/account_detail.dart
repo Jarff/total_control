@@ -1,10 +1,16 @@
+import 'package:control_total/src/helpers/helper.dart';
 import 'package:control_total/src/models/Account.dart';
+import 'package:control_total/src/models/Transaction.dart';
+import 'package:control_total/src/models/TransactionType.dart';
 import 'package:control_total/src/models/account_type.dart';
+import 'package:control_total/src/widgets/TransactionTitleDateWidget.dart';
+import 'package:control_total/src/widgets/TransactionWidget.dart';
 import 'package:control_total/themes/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
 
 class AccountDetailWidget extends StatefulWidget {
-  AccountDetailWidget({Key? key}) : super(key: key);
+  var account;
+  AccountDetailWidget({Key? key, required this.account}) : super(key: key);
 
   @override
   State<AccountDetailWidget> createState() => AccountDetailWidgetState();
@@ -12,34 +18,64 @@ class AccountDetailWidget extends StatefulWidget {
 
 class AccountDetailWidgetState extends State<AccountDetailWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  late Account account;
+  List<Widget> transactionsWidgets = [];
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     load();
   }
 
-  void load() async {
-    Account accountRepo =
-        Account(balance: 0, name: 'Test', type: AccountType.credit);
-    var map = await accountRepo.find(1);
+  Future<void> load() async {
+    Transaction transactionRepo = Transaction();
+    var transactions = await transactionRepo
+        .where('account_id=?', [widget.account.id], orderBy: "date DESC");
+    DateTime? currentDate = DateTime.now();
+    for (var map in transactions) {
+      Transaction transaction = await Transaction.map(map);
+      if (currentDate != transaction.date) {
+        transactionsWidgets
+            .add(TransactionTitleDateWidget(transaction: transaction));
+      }
+      currentDate = transaction.date;
+      setState(() {
+        transactionsWidgets.add(TransactionWidget(transaction: transaction));
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
+      floatingActionButton: (widget.account.type == AccountType.credit)
+          ? SizedBox(
+              width: 80,
+              height: 80,
+              child: FloatingActionButton(
+                backgroundColor: Color(0xFF2DCE89),
+                onPressed: () async {
+                  // Add your onPressed code here!
+                  await Navigator.of(context).pushReplacementNamed(
+                      '/AddTransaction',
+                      arguments: TransactionType.transfer);
+                },
+                child: const Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: Text("PAGAR"),
+                ),
+              ),
+            )
+          : null,
       appBar: AppBar(
-        backgroundColor: Color(0xFFF8FAFB),
-        iconTheme: IconThemeData(color: Color(0xFFA8AAAB)),
+        backgroundColor: const Color(0xFFF8FAFB),
+        iconTheme: const IconThemeData(color: Color(0xFFA8AAAB)),
         automaticallyImplyLeading: true,
         title: Text(
           'Detalle Cuenta',
           style: FlutterFlowTheme.bodyText1.override(
             fontFamily: 'Poppins',
-            color: Color(0xFFA8AAAB),
+            color: const Color(0xFFA8AAAB),
             fontSize: 20,
           ),
         ),
@@ -56,7 +92,7 @@ class AccountDetailWidgetState extends State<AccountDetailWidget> {
         centerTitle: true,
         elevation: 0,
       ),
-      backgroundColor: Color(0xFFF5F5F5),
+      backgroundColor: const Color(0xFFF5F5F5),
       body: SafeArea(
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
@@ -65,7 +101,7 @@ class AccountDetailWidgetState extends State<AccountDetailWidget> {
             child: Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 1,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Color(0xFFF8FAFB),
               ),
               child: SingleChildScrollView(
@@ -74,18 +110,19 @@ class AccountDetailWidgetState extends State<AccountDetailWidget> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 45, 0, 25),
+                      padding:
+                          const EdgeInsetsDirectional.fromSTEB(0, 45, 0, 25),
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.9,
                         height: 200,
                         decoration: BoxDecoration(
-                          boxShadow: [
+                          boxShadow: const [
                             BoxShadow(
                               blurRadius: 40,
                               color: Color(0x8A171717),
                             )
                           ],
-                          gradient: LinearGradient(
+                          gradient: const LinearGradient(
                             colors: [
                               Color(0xFFFB9373),
                               Color(0xFFD26BF1),
@@ -98,8 +135,8 @@ class AccountDetailWidgetState extends State<AccountDetailWidget> {
                           borderRadius: BorderRadius.circular(25),
                         ),
                         child: Padding(
-                          padding:
-                              EdgeInsetsDirectional.fromSTEB(15, 15, 15, 15),
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                              15, 15, 15, 15),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -110,7 +147,7 @@ class AccountDetailWidgetState extends State<AccountDetailWidget> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    'SANTANDER',
+                                    widget.account.name,
                                     style: FlutterFlowTheme.bodyText1.override(
                                       fontFamily: 'Montserrat',
                                       color: Colors.white,
@@ -118,7 +155,7 @@ class AccountDetailWidgetState extends State<AccountDetailWidget> {
                                     ),
                                   ),
                                   Text(
-                                    'VISA',
+                                    widget.account.red,
                                     style: FlutterFlowTheme.bodyText1.override(
                                       fontFamily: 'Montserrat',
                                       color: Colors.white,
@@ -128,7 +165,7 @@ class AccountDetailWidgetState extends State<AccountDetailWidget> {
                                 ],
                               ),
                               Text(
-                                '\$,1099',
+                                '\$ ${Helper.numberFormat(widget.account?.balance.toStringAsFixed(2) ?? 0)}',
                                 style: FlutterFlowTheme.bodyText1.override(
                                   fontFamily: 'Roboto',
                                   color: Colors.white,
@@ -140,7 +177,7 @@ class AccountDetailWidgetState extends State<AccountDetailWidget> {
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Text(
-                                    'CREDITO',
+                                    widget.account.getType(),
                                     style: FlutterFlowTheme.bodyText1.override(
                                       fontFamily: 'Montserrat',
                                       color: Colors.white,
@@ -154,82 +191,32 @@ class AccountDetailWidgetState extends State<AccountDetailWidget> {
                         ),
                       ),
                     ),
-                    Text(
-                      'Día de corte: 10',
-                      style: FlutterFlowTheme.subtitle2,
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 15, 20, 0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Text(
-                            'Vie 13 Ene',
-                            style: FlutterFlowTheme.bodyText1,
+                    (widget.account.type == AccountType.credit)
+                        ? Text(
+                            'Saldo: \$${Helper.numberFormat(widget.account.saldo.toStringAsFixed(2) ?? '0.0')}',
+                            style: const TextStyle(
+                                fontSize: 23, fontWeight: FontWeight.bold),
+                          )
+                        : const SizedBox(
+                            height: 0,
                           ),
-                        ],
-                      ),
+                    const SizedBox(
+                      height: 10,
                     ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          color: Color(0xFFFBF9F5),
-                          boxShadow: [
-                            BoxShadow(
-                              blurRadius: 20,
-                              color: Color(0x18171717),
-                            )
-                          ],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Padding(
-                          padding:
-                              EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Corte de Cabello',
-                                style: FlutterFlowTheme.bodyText1.override(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Color(0xFFDB3636),
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      8, 2, 8, 2),
-                                  child: Text(
-                                    'SELF CARE',
-                                    style: FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Poppins',
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                '\$1,448.09',
-                                style: FlutterFlowTheme.bodyText1.override(
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
+                    /**
+                     * TODO:
+                     * Agregar el texto que indica la fecha líimite de pago
+                     * Mejorar la estetica de la vista
+                     */
+                    (widget.account.type == AccountType.credit)
+                        ? Text(
+                            'Día de corte: ${widget.account.cutDate ?? '-'}',
+                            style: FlutterFlowTheme.subtitle2,
+                          )
+                        : const SizedBox(
+                            height: 0,
                           ),
-                        ),
-                      ),
-                    ),
+                    ...transactionsWidgets
                   ],
                 ),
               ),

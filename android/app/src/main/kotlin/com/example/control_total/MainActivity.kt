@@ -1,4 +1,4 @@
-package com.example.control_total
+package com.buhese.control_total
 
 import io.flutter.embedding.android.FlutterActivity
 

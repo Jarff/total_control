@@ -2,6 +2,7 @@ import 'package:control_total/src/views/account_detail.dart';
 import 'package:control_total/src/views/add_credit_card.dart';
 import 'package:control_total/src/views/add_repository.dart';
 import 'package:control_total/src/views/add_transaction.dart';
+import 'package:control_total/src/views/categories.dart';
 import 'package:control_total/src/views/dashboard.dart';
 import 'package:control_total/src/views/pages.dart';
 import 'package:control_total/src/views/start.dart';
@@ -19,10 +20,17 @@ class RouteGenerator {
             currentTab: args,
           ),
         );
+      case '/Categories':
+        return MaterialPageRoute(
+            builder: (_) => const CategoriesPageWidget(),
+            fullscreenDialog: true);
       case '/AddCreditCard':
         return MaterialPageRoute(builder: (_) => const AddCreditCardWidget());
       case '/DetailAccount':
-        return MaterialPageRoute(builder: (_) => AccountDetailWidget());
+        return MaterialPageRoute(
+            builder: (_) => AccountDetailWidget(
+                  account: args,
+                ));
       case '/AddRepository':
         return MaterialPageRoute(builder: (_) => const AddRepositoryWidget());
       case '/AddTransaction':

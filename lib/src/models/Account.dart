@@ -1,5 +1,6 @@
 import 'package:control_total/src/models/DataModel.dart';
 import 'package:control_total/src/models/Model.dart';
+import 'package:control_total/src/models/account_type.dart';
 
 class Account extends Model {
   Account(
@@ -23,6 +24,19 @@ class Account extends Model {
   String? cutDate;
   @override
   List<DataModel> columns = [];
+
+  String getType() {
+    switch (type) {
+      case AccountType.credit:
+        return "CRÉDITO";
+      case AccountType.debit:
+        return "DÉBITO";
+      case AccountType.repository:
+        return "REPOSITORIO";
+      default:
+        return "SIN ASIGNAR";
+    }
+  }
 
   @override
   String getTable() {
