@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "906098243167",
+    "project_id": "total-control-ba0be",
+    "storage_bucket": "total-control-ba0be.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:906098243167:android:96799387e7a6e919ec4dea",
+        "android_client_info": {
+          "package_name": "com.buhese.control_total"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "906098243167-lhk0r9q5bdrold4ol84u4ivn0nqaq7qp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1D12yFFBiRdn6O2G0mSGXVkXGGpvvh9M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "906098243167-lhk0r9q5bdrold4ol84u4ivn0nqaq7qp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
